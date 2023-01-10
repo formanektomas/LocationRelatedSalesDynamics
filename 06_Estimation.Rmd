@@ -1,0 +1,101 @@
+---
+title: "Estimation"
+output: html_document
+date: '2022'
+---
+
+```{r, include=FALSE}
+library(tidyverse)
+library(lmtest)
+library(sandwich)
+library(car)
+library(splines)
+library(mgcv)
+library(margins)
+library(stargazer)
+```
+
+
+
+```{r, include=F}
+### Read-in data
+# please note that the script is illustrative, csv files not included
+Regressors <- read.csv("regressors.csv")
+SalesQuant <- read.csv("SalesQuant.csv")
+SalesShare <- read.csv("salesShare.csv")
+```
+
+
+---
+
+
+#### Sales Share, Total
+
+```{r, echo = F}
+
+formulaC <- y ~ lDens + lStArea + lMallDist + inMall + Rstn5mWalk + PTStop10mWalk + cityPer + PRG +
+  lWageMed  + bc_s + cc_s + cityPer + log(buidl_sat)
+
+depvar <- SalesShare
+
+results <- list()
+robust_SE <- list()
+for (ii in 1:6) {
+  print(colnames(depvar)[ii])
+  y <- depvar[,ii]
+  lm.fit3 <- lm(formulaC, data=Regressors) 
+  vcov <- vcovHC(lm.fit3, "HC1")
+  robust_se <- sqrt(diag(vcov))
+  #
+  current <- list(lm.fit3)
+  names(current) <- paste("Cluster",ii, sep = "")
+  results <- append(results,current)
+  #
+  current_SE <- list(robust_se)
+  names(current_SE) <- paste("Cluster",ii, sep = "")
+  robust_SE <- append(robust_SE,current_SE)
+}
+stargazer::stargazer(results, type="text", se = robust_SE)
+```
+
+
+---
+
+
+```{r, include=F}
+
+formulaCV <- y ~ lDens + lStArea + lMallDist + inMall + Pharm10mWalk +
+  Post5mWalk + cityPer + lWageMed  + bc_s + cc_s + log(buidl_sat)
+```
+
+
+-------
+
+#### Sales Quantity (baskets in a cluster), Total
+
+```{r, echo = F}
+
+depvar <- SalesQuant
+
+results <- list()
+robust_SE <- list()
+for (ii in 1:6) {
+  print(colnames(depvar)[ii])
+  y <- depvar[,ii]
+  lm.fit3 <- lm(formulaCV, data=Regressors) 
+  vcov <- vcovHC(lm.fit3, "HC1")
+  robust_se <- sqrt(diag(vcov))
+  #
+  current <- list(lm.fit3)
+  names(current) <- paste("Cluster",ii, sep = "")
+  results <- append(results,current)
+  #
+  current_SE <- list(robust_se)
+  names(current_SE) <- paste("Cluster",ii, sep = "")
+  robust_SE <- append(robust_SE,current_SE)
+}
+stargazer::stargazer(results, type="text", se = robust_SE)
+```
+
+
+-------
