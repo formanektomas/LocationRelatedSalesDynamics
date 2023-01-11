@@ -13,11 +13,11 @@ rm(list = ls())
 hereR::set_key("API key") # you need to provide your own API key 
 # .. if necessary,
 # .. register at https://developer.here.com/
-# .. create a Project & get API key
+# .. create a Project & get free API key (limited, yet sufficient functionality)
 #
 #
 #########################################################
-# Locations of 3 stores (illustrative data)
+# Locations of 6 stores (illustrative data)
 #
 load("Isochrones.RData")
 #
