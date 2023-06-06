@@ -1,3 +1,3 @@
 # Supporting matterials for the article
 
-## Geo-spatial and socio-demographic determinants of sales dynamics in brick-and-mortar retail stores
+## Shopping mission types and store location effect on consumer behavior: a data driven analysis
